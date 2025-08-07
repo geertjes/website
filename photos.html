@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Photo Viewer</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin: 2em;
+      background: #fdfdfd;
+    }
+
+    h1 {
+      margin-bottom: 1.5em;
+    }
+
+    img {
+      max-width: 100%;
+      max-height: 80vh;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: opacity 0.3s;
+    }
+
+    .caption {
+      margin-top: 1em;
+      font-style: italic;
+      color: #555;
+    }
+
+    .buttons {
+      margin-top: 1.5em;
+    }
+
+    button {
+      padding: 0.5em 1.2em;
+      margin: 0 0.5em;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    @media (hover: hover) {
+      button:hover {
+        background-color: #eee;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>My Photo Gallery</h1>
+
+  <img id="viewer" src="" alt="">
+  <div class="caption" id="caption"></div>
+
+  <div class="buttons">
+    <button onclick="prevImage()">← Previous</button>
+    <button onclick="nextImage()">Next →</button>
+  </div>
+
+  <script>
+    const images = [
+      { src: 'images/photo1.jpg', caption: 'Photo 1 description' },
+      { src: 'images/photo2.jpg', caption: 'Photo 2 description' },
+      { src: 'images/photo3.jpg', caption: 'Photo 3 description' }
+      // Add more photos here
+    ];
+
+    let index = 0;
+    const viewer = document.getElementById('viewer');
+    const caption = document.getElementById('caption');
+
+    function showImage(i) {
+      viewer.style.opacity = 0;
+      setTimeout(() => {
+        viewer.src = images[i].src;
+        viewer.alt = images[i].caption;
+        caption.textContent = images[i].caption;
+        viewer.style.opacity = 1;
+      }, 150);
+    }
+
+    function prevImage() {
+      index = (index - 1 + images.length) % images.length;
+      showImage(index);
+    }
+
+    function nextImage() {
+      index = (index + 1) % images.length;
+      showImage(index);
+    }
+
+    // Keyboard support
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') prevImage();
+      if (e.key === 'ArrowRight') nextImage();
+    });
+
+    // Touch swipe support
+    let touchStartX = 0;
+    viewer.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+    viewer.addEventListener('touchend', e => {
+      const deltaX = e.changedTouches[0].screenX - touchStartX;
+      if (deltaX > 50) prevImage();
+      else if (deltaX < -50) nextImage();
+    });
+
+    // Show first image on load
+    showImage(index);
+  </script>
+
+</body>
+</html>
